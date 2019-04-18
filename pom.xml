@@ -59,6 +59,12 @@
             <artifactId>mongo-java-driver</artifactId>
             <version>3.5.0</version>
         </dependency>
+        
+        <dependency>
+		    <groupId>com.github.jsonld-java</groupId>
+		    <artifactId>jsonld-java</artifactId>
+		    <version>0.12.3</version>
+		</dependency>
     </dependencies>
     <properties>
         <jersey.version>2.27</jersey.version>
