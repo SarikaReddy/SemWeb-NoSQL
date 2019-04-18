@@ -66,7 +66,7 @@ public class DBConnection {
 	public static void addDataProperties(ArrayList<String> dproperties) {
 		try
 		{
-			MongoCollection<Document> coll = db.getCollection("DataTypeProperty");
+			MongoCollection<Document> coll = db.getCollection("DatatypeProperty");
 			
 			Document doc = null;
 			
@@ -120,13 +120,13 @@ public class DBConnection {
 		}
 	}
 
-	public static ArrayList<String> getDetails() {
+	public static ArrayList<String> getDetails(String collection) {
 		
 		ArrayList<String> individuals = new ArrayList<>();
 		
 		try
 		{
-			MongoCollection<Document> coll = db.getCollection("NamedIndividual");
+			MongoCollection<Document> coll = db.getCollection(collection);
 			
 			FindIterable<Document> docs = coll.find();
 			
@@ -142,24 +142,21 @@ public class DBConnection {
 		return individuals;
 	}
 
-	public static void addInstanceDetails(List<HashMap<String, String>> list) {
+	public static void addInstanceDetails(List<HashMap<String, String>> list,String collection) {
 		
 		try
 		{
-			MongoCollection<Document> coll = db.getCollection("NamedIndividual");
-			
-			//FindIterable<Document> docs = coll.find();
-			
+			MongoCollection<Document> coll = db.getCollection(collection);
+						
 			for(HashMap<String, String> map : list) {
 				
 				String temp = map.get("title");
-				FindIterable<Document> docs = coll.find();
-				Bson filter = new Document("title", temp);
-				for(Map.Entry<String,String> e : map.entrySet()) {
-					coll.updateOne(filter, {$set: {e.getKey():e.getValue()}});
-				}
-				
-				System.out.println("Here");
+				BasicDBObject doc=new BasicDBObject();
+				BasicDBObject q=new BasicDBObject("title",temp);
+				  for(Map.Entry<String,String> e : map.entrySet()) { 
+					  doc.put(e.getKey(), e.getValue());
+				  } 				
+				coll.updateMany(q,new BasicDBObject("$set",doc));
 			}
 			
 		}

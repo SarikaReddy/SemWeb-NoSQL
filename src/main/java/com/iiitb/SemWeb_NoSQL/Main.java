@@ -44,15 +44,18 @@ public class Main {
 //		addDataTypeProperty(model); 
 //		addObjectProperty(model);
 //		addIndividual(model);
-		
-		addDetails(model);
+//		
+//		addDetails(model,"Class");
+//		addDetails(model,"ObjectProperty");
+//		addDetails(model,"DatatypeProperty");
+//		addDetails(model,"NamedIndividual");
 	}
 	
 
-	static void addDetails(Model model) {
+	static void addDetails(Model model,String collection) {
 		
 		List<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
-		ArrayList<String> individuals = DBConnection.getDetails();
+		ArrayList<String> individuals = DBConnection.getDetails(collection);
 		for(String s : individuals) {
 			
 			HashMap<String,String> map = new HashMap<String,String>();
@@ -87,7 +90,7 @@ public class Main {
 			        String[] objects;
 			        if(object.contains("#")) {
 			        	objects = object.split("#");
-			        	if(!objects[1].equals("NamedIndividual"))
+			        	if(!objects[1].equals(collection))
 			        		map.put(words[1],objects[1]);
 			        }
 			        else {
@@ -99,7 +102,7 @@ public class Main {
 				qexec.close();
 			}
 			list.add(map);
-			DBConnection.addInstanceDetails(list);
+			
 			
 		}
 		
@@ -107,10 +110,9 @@ public class Main {
 			  for(Map.Entry<String,String> e : map.entrySet()) { 
 				  System.out.println(e.getKey() + " " + e.getValue());
 			  }
-			  System.out.println("0");
 		  }
 		 
-		DBConnection.addInstanceDetails(list);
+		  DBConnection.addInstanceDetails(list,collection);
 	}
 
 
