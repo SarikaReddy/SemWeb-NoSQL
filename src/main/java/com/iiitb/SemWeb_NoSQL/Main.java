@@ -38,8 +38,7 @@ public class Main {
 		FileManager.get().addLocatorClassLoader(Main.class.getClassLoader());
 		Model model = FileManager.get().loadModel("/home/sarika1/Downloads/university.owl");
 		
-		DBConnection.establishConnection();
-		
+//		DBConnection.establishConnection();
 //		addClass(model); 
 //		addDataTypeProperty(model); 
 //		addObjectProperty(model);
@@ -49,6 +48,9 @@ public class Main {
 //		addDetails(model,"ObjectProperty");
 //		addDetails(model,"DatatypeProperty");
 //		addDetails(model,"NamedIndividual");
+//		DBConnection.addTypestoClasses();
+//		
+		DBConnection.addIDstoSuperClasses();
 	}
 	
 
