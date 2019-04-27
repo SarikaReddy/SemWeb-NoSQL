@@ -3,8 +3,10 @@ package com.iiitb.SemWeb_NoSQL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;import java.util.Map;
+import java.util.Set;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
@@ -35,7 +37,7 @@ public class DBConnection {
 			mongoClient = new MongoClient("localhost", 27017);
 			System.out.println("Connection build successfully");
 			
-		    db = mongoClient.getDatabase("university");
+		    db = mongoClient.getDatabase("university1");
 		}
 		catch(MongoException e) {
 			
@@ -208,7 +210,7 @@ public class DBConnection {
 				mongoClient = new MongoClient("localhost", 27017);
 				System.out.println("Connection build successfully");
 				
-				db = mongoClient.getDB("university");
+				db = mongoClient.getDB("university1");
 			}
 			catch(MongoException e) {
 				
@@ -242,7 +244,8 @@ public class DBConnection {
 				do {
 					String superClass = doc.get("subClassOf").toString();
 							//((Document) doc).getString("subClassOf");
-					System.out.println(superClass);
+					String currClass = doc.get("title").toString();
+					System.out.println(superClass+" "+ currClass);
 					
 					DBObject dbObject = (DBObject) doc.get("data");
 					
@@ -252,7 +255,7 @@ public class DBConnection {
 //					for(Object obj : arr) {
 //						r = new BasicDBObject();
 //						r.put("data",obj);
-					List<Object> list = new ArrayList<Object>();
+					Set<Object> list = new HashSet<Object>();
 //					}
 					for (Object key : dbObject.keySet()) {
 					    list.add(dbObject.get((String) key));
@@ -265,7 +268,7 @@ public class DBConnection {
 					//DBObject ex = coll.findOne(new BasicDBObject("data",new BasicDBObject("$exists",true)));
 					
 					BasicDBObject andQuery = new BasicDBObject();
-				    List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
+				    Set<BasicDBObject> obj = new HashSet<BasicDBObject>();
 				    obj.add(d);
 				    obj.add(new BasicDBObject("data",new BasicDBObject("$exists",true)));
 				    andQuery.put("$and", obj);
@@ -280,7 +283,7 @@ public class DBConnection {
 //						}
 						for (Object key : dbo.keySet()) {
 						    list.add(dbo.get((String) key));
-						    System.out.println(d.get((String) key));
+						    System.out.println(dbo.get((String) key));
 						}
 						BasicDBObject r = new BasicDBObject();
 						r.put("data",list);
@@ -315,5 +318,90 @@ public class DBConnection {
 		}
 	}
 	
+	public static List<String> getAll() {
+		try
+		{
+			MongoCollection<Document> coll = db.getCollection("NamedIndividual");
+			
+			FindIterable<Document> docs = coll.find();
+			
+			List<String> list = new ArrayList<String>();
+			for(Document doc : docs) {
+				list.add(doc.toJson());
+				System.out.println(doc.toJson());
+			}
+			System.out.println(list);
+			return list;
+		}
+		catch(MongoException e)
+		{
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void addSymmetricProperties(ArrayList<String> sproperties) {
+		try
+		{
+			MongoCollection<Document> coll = db.getCollection("SymmetricProperty");
+			
+			Document doc = null;
+			
+			for(String s : sproperties) {
+				doc = new Document("title",s);
+				coll.insertOne(doc);
+			}
+			
+		}
+		catch(MongoException e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void addTransitiveProperties(ArrayList<String> tproperties) {
+		try
+		{
+			MongoCollection<Document> coll = db.getCollection("TransitiveProperty");
+			
+			Document doc = null;
+			
+			for(String s : tproperties) {
+				doc = new Document("title",s);
+				coll.insertOne(doc);
+			}
+			
+		}
+		catch(MongoException e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void addInverseProperties(ArrayList<String> iproperties) {
+		try
+		{
+			MongoCollection<Document> coll = db.getCollection("InverseProperty");
+			
+			Document doc = null;
+			
+			for(String s : iproperties) {
+				doc = new Document("title",s);
+				coll.insertOne(doc);
+			}
+			
+		}
+		catch(MongoException e)
+		{
+			e.printStackTrace();
+		}
+		
+	}
+
+	public static void closeConnection() {
+		mongoClient.close();
+	}
 	
 }

@@ -31,35 +31,39 @@ import com.github.jsonldjava.utils.JsonUtils;
 
 public class Main {
 	
-	
-
 	public static void main(String[] args) throws FileNotFoundException {	
 		
 		FileManager.get().addLocatorClassLoader(Main.class.getClassLoader());
-		Model model = FileManager.get().loadModel("/home/sarika1/Downloads/university.owl");
+		Model model = FileManager.get().loadModel("/home/sarika1/Downloads/Finalplease.owl");
 		
-//		DBConnection.establishConnection();
-//		addClass(model); 
-//		addDataTypeProperty(model); 
-//		addObjectProperty(model);
-//		addIndividual(model);
-//		
-//		addDetails(model,"Class");
-//		addDetails(model,"ObjectProperty");
-//		addDetails(model,"DatatypeProperty");
-//		addDetails(model,"NamedIndividual");
-//		DBConnection.addTypestoClasses();
-//		
+		DBConnection.establishConnection();
+		addClass(model); 
+		addDataTypeProperty(model); 
+		addObjectProperty(model);
+		addIndividual(model);	
+		addSymmetricProperty(model);
+		addTransitiveProperty(model);
+		
+		addDetails(model,"Class");
+		addDetails(model,"ObjectProperty");
+		addDetails(model,"DatatypeProperty");
+		addDetails(model,"NamedIndividual");
+		addDetails(model,"SymmetricProperty");
+		addDetails(model,"TransitiveProperty");
+		
+		DBConnection.addTypestoClasses();		
+		DBConnection.closeConnection();
+		
 		DBConnection.addIDstoSuperClasses();
 	}
 	
 
 	static void addDetails(Model model,String collection) {
 		
-		List<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
+		List<HashMap<String,String>> list = new ArrayList<HashMap<String,String>>();
 		ArrayList<String> individuals = DBConnection.getDetails(collection);
 		for(String s : individuals) {
-			
+			System.out.println(s);
 			HashMap<String,String> map = new HashMap<String,String>();
 			map.put("title",s);
 			
@@ -79,15 +83,16 @@ public class Main {
 					QuerySolution soln = results.nextSolution();
 					RDFNode ynode = soln.get("object");
 					String predicate = null;
-					String object = null;
+					String object = "";
 			        if (ynode.isResource()) {
 			             predicate = soln.getResource("predicate").getURI();
-			             object = soln.getResource("object").getURI();
+			             object = String.valueOf(soln.getResource("object").getURI());
+			             System.out.println("HEre");
 			        } else {
 			        	 predicate = soln.getResource("predicate").getURI();
 			        	 object = soln.getLiteral("object").getString();
 			        }
-			        //System.out.println(predicate+" "+object);
+			        System.out.println(predicate+" "+object);
 			        String[] words = predicate.split("#");
 			        String[] objects;
 			        if(object.contains("#")) {
@@ -227,6 +232,94 @@ public class Main {
 			qexec.close();
 		}
 		DBConnection.addIndividuals(individuals);
+
+	}
+	
+	static void addSymmetricProperty(Model model) {
+		
+		String queryString = "prefix owl: <http://www.w3.org/2002/07/owl#>\n" + 
+				"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + 
+				"\n" + 
+				"SELECT DISTINCT ?class\n" + 
+				"WHERE {\n" + 
+				"  ?class a owl:SymmetricProperty.\n" + 
+				"}";
+		Query query = QueryFactory.create(queryString);
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+		int i = 0;
+		ArrayList<String> sproperties = new ArrayList<>();
+		try {
+			ResultSet results = qexec.execSelect();
+			while(results.hasNext()) {
+				QuerySolution soln = results.nextSolution();
+				String name = soln.getResource("class").getURI();
+				String[] words = name.split("#");
+				sproperties.add(words[1]);
+			}
+		}
+		finally {
+			qexec.close();
+		}
+		DBConnection.addSymmetricProperties(sproperties);
+
+	}
+	
+	static void addTransitiveProperty(Model model) {
+		
+		String queryString = "prefix owl: <http://www.w3.org/2002/07/owl#>\n" + 
+				"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + 
+				"\n" + 
+				"SELECT DISTINCT ?class\n" + 
+				"WHERE {\n" + 
+				"  ?class a owl:TransitiveProperty.\n" + 
+				"}";
+		Query query = QueryFactory.create(queryString);
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+		int i = 0;
+		ArrayList<String> tproperties = new ArrayList<>();
+		try {
+			ResultSet results = qexec.execSelect();
+			while(results.hasNext()) {
+				QuerySolution soln = results.nextSolution();
+				String name = soln.getResource("class").getURI();
+				String[] words = name.split("#");
+				tproperties.add(words[1]);
+			}
+		}
+		finally {
+			qexec.close();
+		}
+		DBConnection.addTransitiveProperties(tproperties);
+
+	}
+	
+	
+	static void addInverseProperty(Model model) {
+		
+		String queryString = "prefix owl: <http://www.w3.org/2002/07/owl#>\n" + 
+				"prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>\n" + 
+				"\n" + 
+				"SELECT DISTINCT ?class\n" + 
+				"WHERE {\n" + 
+				"  ?class a owl:InverseProperty.\n" + 
+				"}";
+		Query query = QueryFactory.create(queryString);
+		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+		int i = 0;
+		ArrayList<String> iproperties = new ArrayList<>();
+		try {
+			ResultSet results = qexec.execSelect();
+			while(results.hasNext()) {
+				QuerySolution soln = results.nextSolution();
+				String name = soln.getResource("class").getURI();
+				String[] words = name.split("#");
+				iproperties.add(words[1]);
+			}
+		}
+		finally {
+			qexec.close();
+		}
+		DBConnection.addInverseProperties(iproperties);
 
 	}
 

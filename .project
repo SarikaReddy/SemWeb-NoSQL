@@ -34,16 +34,4 @@
 		<nature>org.eclipse.wst.common.project.facet.core.nature</nature>
 		<nature>org.eclipse.wst.jsdt.core.jsNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>src/main/resources/Album.rdf</name>
-			<type>1</type>
-			<location>/home/sarika1/Downloads/Album.rdf</location>
-		</link>
-		<link>
-			<name>src/main/resources/index.rdf</name>
-			<type>1</type>
-			<location>/home/sarika1/Downloads/index.rdf</location>
-		</link>
-	</linkedResources>
 </projectDescription>

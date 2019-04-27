@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Semantic Web with NoSQL</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--===============================================================================================-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css"/>
+
+    <link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"/>
+
+    <!--  <link rel="stylesheet" type="text/css" href="css/home.css" /> -->
+    <!--===============================================================================================-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+  
+  /* $(document).ready(function() {
+	
+	var api = "http://localhost:8055/SemWeb-NoSQL/webapi/Get/individuals";
+	var divId = document.getElementById("json");
+	
+	$.get(api , function(data, status){
+		data.forEach(function(item){
+			for(var keys in item){
+				 console.log(keys +"-->"+item[keys]);
+				 divId.innerHTML = divId.innerHTML + "<br/>"+ keys +"-->"+item[keys];
+			}
+		});		
+		
+	});  	
+  }); */
+  
+  $(document).ready(function() {
+	  $('#query').keydown(function() {
+		  if(event.keyCode == 13) {
+			 $("#exec").click();	  
+		  }
+	  });
+  });
+	  
+  
+  function execQuery(){
+	  
+	  var query = $("#query").val();
+	  var data = {
+	   		query : query
+	  };
+	  var tag = document.getElementById("tag");
+	  var divId = document.getElementById("pref");
+	  $("#tag").empty();
+	  $("#pref").empty();
+	  
+	  $.ajax({
+	    	type: "POST",
+	        url: "http://localhost:8055/SemWeb-NoSQL/webapi/Test/execQuery/",
+	        data: data,
+	        cache: false,
+	        success:function(result){
+	        	//alert(query);
+	        	//alert(result);
+	        	tag.innerHTML += "Output of '";
+	        	tag.innerHTML += query;
+	        	tag.innerHTML += "' is : \n";
+	        	divId.innerHTML += result;
+	        	document.getElementById("query").value = '';
+	        }
+	    });
+  }
+  
+  </script>
+  <style>
+  	.jumbotron {
+    	background-color: #000000;	
+    	color : #FFFFFF;
+	}
+  </style>
+  </head>
+  <body class="bg">
+    <div class="jumbotron text-center">
+		<h1>Semantic Web using MongoDB</h1>
+	</div>
+    
+    <div class="input-group col-lg-8 " style="margin-left:190px" >
+		<input type="text" id="query" placeholder="Insert query" class="form-control"/>
+		<span class="input-group-btn"> 
+			<button type="button" id = "exec" onclick="execQuery();" class="btn btn-success">Submit Query</button>
+		</span>
+	</div>
+	
+	
+	<h3 id="tag"></h3>
+	
+	<pre id="pref">Output shows up here:</pre>
+	
+   </body>
+</html>
